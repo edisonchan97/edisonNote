@@ -1,0 +1,94 @@
+	2018.01.03
+处理了跨域
+在php的controller的控制器最顶上加了一句话
+header("Access-Control-Allow-Origin: *");
+前端跨域出现的问题就消失了。
+测试php端，将发送请求链接放入地址栏，使用 var_dump()即可输出；
+phpinfo()可获取相关php的信息；
+php获取时间date('y-m-d h:i:s',time())，
+同时在php文件顶上设置date_default_timezone_set('prc');这样就是北京时间
+对用户密码的处理，在php中利用hash()并且加盐处理，
+Php字符串拼接用 .  或者 .”.
+	2018.01.04
+注册，登陆完成
+获取v-model的值直接在函数中用 this.username，this.value
+请求成功后的页面跳转
+this.$router.push(‘/path’)
+this.$router.push({path:‘/path’})   this.$router.replace({path:‘/path’})
+this.$router.push({name:”path”,params:{username:edison}})
+	2018.01.05
+忘记密码：
+1)	验证身份（输入验证邮箱，输入验证码）
+2)	服务器向邮箱发送邮件（1.辨识用户的信息，2.发送邮箱的时间）
+3)	点击邮箱中的链接，跳转到重置密码页面（细节详谈）
+4)	重置密码成功，跳转登陆页面
+手机短信验证：
+1、 用户：填写手机号码
+2、 用户：点击发送短信
+3、 js  ：调用后端接口，提交手机号码-告知后端发送短信
+4、 后端：生成随机码，作为验证码
+5、 后端：保存随机码-
+6、 后端：调用短信接口-将随机码发送给用户
+7、 用户：接收到短信，填写验证码
+8、 用户：点击提交按钮
+9、 js  ：调用后端接口，提交手机号码、验证码
+10、后端：根据手机号码获取保存的验证码，与接收到的验证码对比，是不是一样的
+11、js  ：判断后端返回的结果Y/N
+12、js  ：反馈用户
+优化：
+a、限制用户多次提交
+b、后端保存的随机码加个时间限制
+	2018.01.06
+vue中的img设置动态src  :src = “picSrc” 在data(){return{ picSrc } }
+问题：
+	Ajax请求php端，与地址栏请求php端，$_SESSION请求结果不一样
+	原因：实现跨域请求时，每次ajax请求都是新的session，导致无法获取登录信息，所有的请求都被判定为未登陆。
+解决方案：axios.defaults.withCredentials=true;
+出现Notice错误，在提示页面加入error_reporting(E_ALL^E_NOTICE);
+邮箱完成
+public function email(){
+		$this->load->library('email');
+		$config['protocol'] = 'smtp';
+		$config['charset'] = 'utf-8';
+		$config['smtp_host'] = 'ssl://smtp.163.com';
+		$config['smtp_user'] = 'edisonzhuozhou@163.com';
+		$config['smtp_pass'] = '自己申请的smtp的码';
+		$config['priority'] = 1;
+		$config['crlf']  = "\\r\\n";
+     	$config['smtp_port'] = 465;
+		$config['wordwrap'] = TRUE;
+		$config['mailtype'] = 'html';
+		$config['validate'] = true;
+		$config['dsn'] = true;
+		$this->email->initialize($config);
+		$this->email->from('edisonzhuozhou@163.com', 'Grapro');
+		$this->email->to('szpengfengrui@126.com');
+		$this->email->subject('Email Test');
+		$this->email->message('SendSuc');
+		$this->email->send();
+		echo $this->email->print_debugger();
+	}
+好使，很快就发送了，但是很奇怪的是，163发126的很快就到了，发送给qq邮箱的去自己163邮箱看有发送，但是qq并没有收到，不知道为什么。。。
+问题：
+Failed to load 
+http://127.0.0.1/garpro/user/userReg?username=szpfr&pwd=416556&email=szpengfengrui@126.com&phone=13724358083: The value of the 'Access-Control-Allow-Origin' header in the response must not be the wildcard '*' when the request's credentials mode is 'include'. Origin 'http://localhost:8080' is therefore not allowed access. The credentials mode of requests initiated by the XMLHttpRequest is controlled by the withCredentials attribute.
+如果我把header('Access-Control-Allow-Origin: http://localhost:8080'); 就不会console.log出错了。但是不影响数据的插入。
+https://www.jianshu.com/p/552daaf2869c  
+
+	2018.01.07
+qq邮箱收到的链接不好使，点击跳转不好使
+php中int型跟char型拼接 有问题
+php中字符串拼接有变量的{$val} 最外面是要“”包裹
+$a = 123;
+#1
+$a = (string) $a; 
+#2 
+$a = $a . '';
+#3
+$a = "{$a}";
+http://blog.csdn.net/cuihaoren01/article/details/46433289
+js截取字符串substring(“从哪”,”到哪”)
+php接受post请求：
+$postMess = file_get_contents("php://input");
+$messObject = json_decode($postMess); //提取POST数据为对象
+Php取对象的属性值 $messObject->属性名
