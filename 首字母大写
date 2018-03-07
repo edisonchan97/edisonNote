@@ -1,0 +1,17 @@
+var str = "my name is edison"
+:first-letter{
+    text-transform:Uppercase 
+}
+-------//段落内首字母大写
+    str = str[0].toUpperCase() + str.slice(1);
+function upCase(str){
+  return str = str[0].toUpperCase() + str.slice(1);
+}
+
+------//段落内所有单词首字母大写
+var str = "my name is edison"
+arr = str.split(" ")
+for(var i=0;i<arr.length;i++){
+	arr[i] =arr[i][0].toUpperCase()+arr[i].substr(1)
+}
+str = arr.join("")
