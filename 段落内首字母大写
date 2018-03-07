@@ -1,0 +1,8 @@
+var str = "my name is edison"
+:first-letter{
+    text-transform:Uppercase 
+}
+    str = str[0].toUpperCase() + str.slice(1);
+function upCase(str){
+  return str = str[0].toUpperCase() + str.slice(1);
+}
