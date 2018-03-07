@@ -1,0 +1,99 @@
+元素隐藏的方式
+	1.display：none
+	2.visibility：hidden
+	3.background-color = color
+	4.移出视窗口 position：absolute;left   float+margin-left
+	5.z-index：-1;
+
+z-index的使用
+	position不为static的情况下,z-index有效
+
+(理解层叠上下文)
+元素满足哪些条件形成层叠上下文
+	1.根元素
+	2.opacity小于1
+	3.position：fixed
+	4.transform 不为none
+	5.z-index不为auto的relative与absolute的元素
+------------
+		- 当处理层叠时候,只比较兄弟元素的z-index,与父元素的z-index无关
+		- 而且z-index=0与z-index=auto 不一样,z-index=0对内形成了一个层叠上下文,而auto没有
+		- ie6-7父元素没有设置z-index就不会形成层叠上下文
+		- ie6-7position：inherit(不支持)无效
+		- ie6下z-index受float属性影响失效
+
+命名规范
+	3种命名方式：匈牙利命名(类型+对象描述),驼峰命名,帕斯卡命名
+	变量名区分大小写,不以数字开头,不包含标点与空格
+	禁止使用关键字和保留字全称
+
+vue
+	组件间的通信是单向数据流
+	vue的依赖追踪原理上不支持双向数据绑定,v-model是监听dom事件实现的语法糖,
+	通过Object.defineProperty把data对象的属性全部转为getter/setter 来实现,当改变一个属性的值是,触发set函数,获取一个属性的值时,触发get函数,也就是视图改变的时候触发数据的改变,数据改变的同时影响着视图变化
+	<input type="text" id="a">
+	<span id="b"></span>
+	<script>
+	const obj={};
+	Object.defineProperty(obj, 'hello', {
+		set: function (newVal) {
+			document.getElementById('a').value = newVal;
+			console.log(newVal)
+			document.getElementById('b').innerHTML = newVal;
+		}
+	});
+
+	document.addEventListener('keyup', function(e) {
+		// console.log(e)
+		obj.hello = e.target.value;
+	});
+	</script>
+
+http协议
+	客户端与服务端建立连接是通过TCP/IP协议
+	三次握手(双方单独维护序列号)
+		Client发送Seq=x,SYN=1 我要建立连接,咱俩同步一下
+		Server发送SYN=1,Ack=x+1,ACK=1,Seq=y 我也同步了,你确认一下,看看这个是不是你的号,我的号发给你
+		Client发送Seq=x+1,Ack=y+1,ACK=1 确认了之前的号是我发的,你的号我还给你,你看是不是 是就建立连接
+
+	四次挥手(TCP全双工,双方需要单独关闭)
+		Client发送FIN=1,ACK=1,告诉你我停止发送数据,你确认一下
+		Server发送ACK=1 告诉客户端,我知道你要关闭了。
+		Server发送FIN=1,ACK=1,告诉客户端,我也要关闭了,你确认一下。
+		Client发送ACK=1 告诉服务端,我也知道你关闭了
+----------	
+	GET -- 检索URI中标识资源的一个简单请求
+	HEAD -- 与GET方法相同,服务器只返回状态行和头标,并不返回请求文档
+	POST -- 服务器接受被写入客户端输出流中的数据的请求
+	PUT -- 服务器保存请求数据作为指定URI新内容的请求
+	DELETE -- 服务器删除URI中命名的资源的请求
+	OPTIONS -- 关于服务器支持的请求方法信息的请求
+	TRACE -- Web服务器反馈Http请求和其头标的请求
+	CONNECT -- 已文档化但当前未实现的一个方法,预留做隧道处理
+-------
+	http状态码
+		1XX
+			100--continue 初始请求已经接受，继续发送请求的剩余部分
+			101--Switching Protocols 按客户端请求更改转换协议
+		2XX
+			200--ok 一切正常，成功
+			202--accepted 请求接受，处理尚未完成
+			205--reset content 没有新的内容，但浏览器应该重置它显示的内容，用于强制浏览器清楚表单输入内容
+		3XX
+			300--Multiple Choices 请求的资源多个地方有，位置返回在文档中
+			301--Moved Permanently 永久重定向，新地址返回给浏览器，自动将访问新地址
+			304--Not Modified 原网页可以继续使用，不返回东西
+		4XX(通常是客户端的错误)
+			400--Bad Request 请求出现语法错误
+			401--Unauthorized 访问被拒绝
+			403--Forbidden 资源不可用，服务端知道了请求，但是拒绝处理他 
+			404--Not Found 无法找到指定位置的资源
+			405--Method Not Allowed 请求方式不对
+			408--Request Timeout 服务器等该请求超时
+			410--Gone 请求的资源永久删除
+		5XX(服务端的错误)
+			500--Internal Server Error 服务器遇到了意料不到的情况，不能完成客户的请求
+			501--Not Implemented 服务器处理该请求的功能暂时没有
+			502--Bad Gateway 错误网关
+			503--Service Unavailable 服务不可用，通常是暂时的。
+			505--HTTP Version Not Supported 服务器不支持请求中所指明的HTTP版本
